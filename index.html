@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#181410">
+<title>Estambul — Kebab · Pizza · Tacos · Smash</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#181410;
+    --paper:#F7EFDD;
+    --paper2:#FFFCF4;
+    --flame:#E2401F;
+    --flame-dk:#AC2C13;
+    --ember:#F0A428;
+    --gray:#8a8175;
+    --line:#e2d6b8;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;min-width:0;}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+  html,body{margin:0;padding:0;background:var(--ink);color:var(--ink);width:100%;max-width:100vw;overflow-x:hidden;}
+  body{font-family:'Space Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:calc(30px + env(safe-area-inset-bottom));}
+  .display{font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.4px;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .marker{font-family:'Permanent Marker',cursive;}
+  a{color:inherit;text-decoration:none;}
+  :focus-visible{outline:2.5px solid var(--ember);outline-offset:2px;}
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+
+  /* ---------- torn-ticket zigzag, same motif as the menu ---------- */
+  .zig{height:11px;width:100%;background-image:linear-gradient(135deg, var(--ink) 25%, transparent 25.5%),linear-gradient(225deg, var(--ink) 25%, transparent 25.5%);background-size:14px 14px;}
+
+  /* ---------- header ---------- */
+  header{background:var(--ink);color:var(--paper);padding:calc(20px + env(safe-area-inset-top)) 18px 22px 18px;position:relative;overflow:hidden;}
+  header::before{content:"";position:absolute;top:-40px;right:-40px;width:170px;height:170px;background:radial-gradient(circle, rgba(226,64,31,.35), transparent 70%);pointer-events:none;}
+  .head-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;position:relative;z-index:1;}
+  .wordmark{font-size:clamp(34px, 12vw, 54px);line-height:.85;color:var(--paper);margin:0;letter-spacing:.5px;}
+  .wordmark span{color:var(--flame);}
+  .concepts{font-size:10px;letter-spacing:2.5px;color:var(--ember);text-transform:uppercase;margin:9px 0 0 0;}
+  .subtag{font-size:13.5px;color:var(--ember);margin:10px 0 0 0;opacity:.95;}
+
+  .stamp{flex:0 0 auto;width:62px;height:62px;border-radius:50%;border:3px double var(--flame);display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-10deg);}
+  .stamp .ar{font-size:9px;color:var(--ember);line-height:1;margin-bottom:2px;}
+  .stamp .tx{font-family:'Anton';font-size:9.5px;color:var(--flame);letter-spacing:.5px;line-height:1.05;text-align:center;}
+
+  main{max-width:480px;margin:0 auto;padding:22px 16px 8px 16px;}
+
+  /* ---------- primary CTA (menu) ---------- */
+  .cta{display:flex;align-items:center;gap:14px;background:var(--flame);border:1px solid var(--flame-dk);color:var(--paper2);border-radius:14px;padding:18px 16px;box-shadow:0 12px 26px -14px rgba(226,64,31,.6);margin-bottom:20px;transition:transform .12s ease;}
+  .cta:active{transform:scale(.98);}
+  .cta .icon-wrap{width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .cta svg{width:26px;height:26px;}
+  .cta-label{font-size:19px;margin:0;}
+  .cta-sub{font-size:11.5px;color:rgba(255,252,244,.85);margin-top:4px;line-height:1.4;}
+  .cta .chev{font-size:22px;color:var(--paper2);flex:0 0 auto;}
+
+  /* ---------- ticket-flyer card, same motif as the menu ---------- */
+  .flyer{background:var(--paper2);border-radius:14px;padding:2px 16px 4px 16px;position:relative;box-shadow:0 10px 24px -14px rgba(0,0,0,.5);border:1px solid var(--line);margin-bottom:18px;}
+  .flyer::before{content:"";position:absolute;top:-9px;left:24px;width:52px;height:18px;background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.5));transform:rotate(-4deg);box-shadow:0 2px 5px rgba(0,0,0,.18);border-radius:2px;}
+  .flyer h2{font-size:12.5px;color:var(--gray);margin:0;padding-top:16px;letter-spacing:2px;}
+
+  .linkstub{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px dashed var(--line);transition:background .12s ease;}
+  .linkstub:last-child{border-bottom:none;}
+  .linkstub:active{background:rgba(24,20,16,.04);}
+  .linkstub .icon-wrap{width:46px;height:46px;border-radius:11px;background:var(--ink);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .linkstub svg{width:22px;height:22px;}
+  .linkstub .text{flex:1 1 auto;min-width:0;overflow-wrap:break-word;}
+  .linkstub .label{font-size:15.5px;letter-spacing:.3px;color:var(--ink);}
+  .linkstub .sub{font-size:11px;color:var(--gray);margin-top:2px;overflow-wrap:break-word;}
+  .linkstub .chev{flex:0 0 auto;color:var(--flame);font-size:19px;}
+
+  /* icon default look: outline strokes on dark chip */
+  .icon-wrap svg{stroke:var(--ember);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .cta .icon-wrap svg{stroke:var(--paper2);}
+  .icon-wrap svg.filled{fill:var(--ember);stroke:none;}
+
+  /* ---------- footer, same structure as the menu ---------- */
+  footer{background:var(--ink);color:var(--paper);padding:22px 20px 28px 20px;margin-top:8px;}
+  footer h3{color:var(--ember);font-size:13px;margin:0 0 10px 0;letter-spacing:.5px;text-transform:uppercase;}
+  .foot-row{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px 10px;font-size:13px;padding:9px 0;border-bottom:1px solid #332e26;}
+  .foot-row:last-child{border-bottom:none;}
+  footer a{text-decoration:underline;text-decoration-color:var(--flame);text-underline-offset:3px;}
+  .foot-fine{font-size:10.5px;color:#9a9284;margin-top:14px;line-height:1.5;}
+  .halal-note{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;color:var(--ember);letter-spacing:.5px;margin-top:12px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-row">
+    <div>
+      <h1 class="wordmark display">estamb<span>u</span>l</h1>
+      <p class="concepts mono">Kebab · Pizza · Tacos · Smash</p>
+      <p class="subtag marker">toca y ya está</p>
+    </div>
+    <div class="stamp"><span class="ar">حلال</span><span class="tx">HALAL</span></div>
+  </div>
+</header>
+<div class="zig"></div>
+
+<main>
+
+  <!-- 1. MENU — primary action -->
+  <!-- Assumes the menu file lives in the same folder as this page. Rename to match your actual filename if different. -->
+  <a class="cta" href="estambul-menu.html">
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"></rect><line x1="8" y1="8" x2="16" y2="8"></line><line x1="8" y1="12" x2="16" y2="12"></line><line x1="8" y1="16" x2="13" y2="16"></line></svg>
+    </div>
+    <div style="flex:1 1 auto;min-width:0;">
+      <div class="cta-label display">Ver la carta</div>
+      <div class="cta-sub mono">todo el menú · precios reales · cero fotos de stock</div>
+    </div>
+    <div class="chev">→</div>
+  </a>
+
+  <!-- 2, 3, 4. SOCIAL + REVIEWS -->
+  <div class="flyer">
+    <h2 class="mono">SÍGUENOS</h2>
+
+    <!-- REPLACE href with your real Instagram profile URL -->
+    <a class="linkstub" href="https://instagram.com/estambulkebab" target="_blank" rel="noopener">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="4"></rect><circle cx="12" cy="13" r="4"></circle><rect x="8" y="3" width="6" height="3" rx="1"></rect></svg>
+      </div>
+      <div class="text">
+        <div class="label display">Instagram</div>
+        <div class="sub mono">@estambulkebab · lo que sale de la plancha</div>
+      </div>
+      <div class="chev">→</div>
+    </a>
+
+    <!-- REPLACE href with your real TikTok profile URL -->
+    <a class="linkstub" href="https://www.tiktok.com/@estambulkebab" target="_blank" rel="noopener">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+      </div>
+      <div class="text">
+        <div class="label display">TikTok</div>
+        <div class="sub mono">@estambulkebab · la cocina en directo</div>
+      </div>
+      <div class="chev">→</div>
+    </a>
+
+    <!-- REPLACE href with your real Google "write a review" short link (Google Business Profile > Ask for reviews > Copy link) -->
+    <a class="linkstub" href="https://www.google.com/maps/search/?api=1&query=Estambul+Kebab+Av.+de+Madrid+42+Barcelona" target="_blank" rel="noopener">
+      <div class="icon-wrap">
+        <svg class="filled" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7L6 21l1.6-7L2.2 9.2l7.1-.6z"></path></svg>
+      </div>
+      <div class="text">
+        <div class="label display">Google Reviews</div>
+        <div class="sub mono">di lo que piensas, de verdad</div>
+      </div>
+      <div class="chev">→</div>
+    </a>
+  </div>
+
+  <!-- bonus: quick actions, easy to remove if you don't want them -->
+  <div class="flyer">
+    <h2 class="mono">ACCESO RÁPIDO</h2>
+
+    <a class="linkstub" href="tel:935277914">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M6.6 10.8a15.9 15.9 0 006.6 6.6l2.2-2.2a1 1 0 011-.25c1.1.37 2.3.57 3.5.57a1 1 0 011 1V20a1 1 0 01-1 1C10.5 21 3 13.5 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.2 2.4.57 3.5a1 1 0 01-.25 1z"></path></svg>
+      </div>
+      <div class="text">
+        <div class="label display">Llamar</div>
+        <div class="sub mono">935 27 79 14</div>
+      </div>
+      <div class="chev">→</div>
+    </a>
+
+    <a class="linkstub" id="mapLink" href="#" target="_blank" rel="noopener">
+      <div class="icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M12 22s7-7.58 7-12a7 7 0 10-14 0c0 4.42 7 12 7 12z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+      </div>
+      <div class="text">
+        <div class="label display">Cómo llegar</div>
+        <div class="sub mono">Av. de Madrid, 42 · Metro Badal (L3)</div>
+      </div>
+      <div class="chev">→</div>
+    </a>
+  </div>
+
+</main>
+
+<footer>
+  <h3>Dónde estamos</h3>
+  <div class="foot-row"><span>Dirección</span><span>Av. de Madrid, 42 · Barcelona</span></div>
+  <div class="foot-row"><span>Metro</span><span>Badal (L3)</span></div>
+  <div class="foot-row"><span>Teléfono</span><a href="tel:935277914">935 27 79 14</a></div>
+  <div class="foot-row"><span>Horario</span><span>casi todos los días hasta las 23:45h</span></div>
+  <p class="foot-fine">sants-montjuïc · sin rollos.</p>
+  <div class="halal-note mono">✦ 100% HALAL</div>
+</footer>
+
+<script>
+document.getElementById("mapLink").href =
+  "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Av. de Madrid, 42, Sants-Montjuïc, 08028 Barcelona");
+</script>
+
+</body>
+</html>

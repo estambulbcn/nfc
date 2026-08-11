@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Estambul — Kebab · Pizza · Tacos · Smash</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#181410;
+    --paper:#F7EFDD;
+    --paper2:#FFFCF4;
+    --flame:#E2401F;
+    --flame-dk:#AC2C13;
+    --ember:#F0A428;
+    --gray:#8a8175;
+    --line:#e2d6b8;
+    --new:#CBFF4D;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;min-width:0;}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+  html,body{margin:0;padding:0;background:var(--ink);color:var(--ink);width:100%;max-width:100vw;overflow-x:hidden;}
+  body{font-family:'Space Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:calc(40px + env(safe-area-inset-bottom));}
+  img{max-width:100%;display:block;}
+  .display{font-family:'Anton',sans-serif;text-transform:uppercase;letter-spacing:.4px;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .marker{font-family:'Permanent Marker',cursive;}
+  a{color:inherit;}
+  :focus-visible{outline:2.5px solid var(--ember);outline-offset:2px;}
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+
+  /* ---------- torn-ticket zigzag ---------- */
+  .zig{height:11px;width:100%;background-image:linear-gradient(135deg, var(--ink) 25%, transparent 25.5%),linear-gradient(225deg, var(--ink) 25%, transparent 25.5%);background-size:14px 14px;}
+  .zig.rev{background-image:linear-gradient(-45deg, var(--paper) 25%, transparent 25.5%),linear-gradient(45deg, var(--paper) 25%, transparent 25.5%);background-size:14px 14px;background-color:var(--ink);}
+
+  /* ---------- header ---------- */
+  header{background:var(--ink);color:var(--paper);padding:calc(18px + env(safe-area-inset-top)) 18px 20px 18px;position:relative;overflow:hidden;}
+  header::before{content:"";position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle, rgba(226,64,31,.35), transparent 70%);pointer-events:none;}
+  .head-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;position:relative;z-index:1;}
+  .wordmark{font-size:clamp(32px, 11vw, 52px);line-height:.85;color:var(--paper);margin:0;letter-spacing:.5px;}
+  .wordmark span{color:var(--flame);}
+  .concepts{font-family:'JetBrains Mono';font-size:10px;letter-spacing:2.5px;color:var(--ember);text-transform:uppercase;margin:8px 0 0 0;}
+  .story{font-size:12.5px;line-height:1.55;color:var(--paper);opacity:.82;margin:12px 0 2px 0;max-width:44ch;}
+  .subtag{font-family:'Permanent Marker';font-size:12.5px;color:var(--ember);margin:8px 0 0 0;opacity:.9;}
+
+  .stamp{flex:0 0 auto;width:66px;height:66px;border-radius:50%;border:3px double var(--flame);display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-10deg);}
+  .stamp .ar{font-size:10px;color:var(--ember);line-height:1;margin-bottom:2px;}
+  .stamp .tx{font-family:'Anton';font-size:10.5px;color:var(--flame);letter-spacing:.5px;line-height:1.05;text-align:center;}
+
+  .langbar{display:flex;gap:6px;margin-top:16px;}
+  .langbtn{font-family:'JetBrains Mono';font-size:11px;font-weight:700;letter-spacing:.5px;padding:7px 12px;min-height:36px;border-radius:5px;background:rgba(247,239,221,.08);color:var(--paper);border:1.5px solid rgba(247,239,221,.3);cursor:pointer;}
+  .langbtn.active{background:var(--flame);border-color:var(--flame);color:#fff;}
+
+  /* ---------- sticky category nav ---------- */
+  .nav-wrap{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:3px solid var(--ink);max-width:100vw;}
+  nav{overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;padding:10px 12px;display:flex;gap:8px;scrollbar-width:none;max-width:100%;}
+  nav::-webkit-scrollbar{display:none;}
+  .tab{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:12.5px;letter-spacing:.3px;background:transparent;color:var(--ink);border:2px solid var(--ink);border-radius:999px;padding:10px 15px;min-height:44px;cursor:pointer;flex:0 0 auto;}
+  .tab.active{background:var(--flame);border-color:var(--flame);color:#fff;}
+
+  main{max-width:640px;margin:0 auto;padding:20px 16px 10px 16px;}
+
+  .section{display:none;}
+  .section.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+  .flyer{background:var(--paper2);border-radius:14px;padding:18px 16px 8px 16px;position:relative;box-shadow:0 10px 24px -14px rgba(0,0,0,.5);border:1px solid var(--line);}
+  .flyer::before{content:"";position:absolute;top:-9px;left:24px;width:52px;height:18px;background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.5));transform:rotate(-4deg);box-shadow:0 2px 5px rgba(0,0,0,.18);border-radius:2px;}
+
+  .section-head{display:flex;align-items:baseline;justify-content:space-between;margin:0 0 4px 0;}
+  .section-head h2{font-size:24px;margin:0;color:var(--ink);}
+  .section-note{font-size:11.5px;color:var(--gray);margin:0 0 14px 0;line-height:1.5;}
+
+  .subgroup-label{font-family:'Anton',sans-serif;text-transform:uppercase;font-size:12.5px;color:var(--flame);letter-spacing:.5px;margin:20px 0 8px 0;padding-bottom:4px;border-bottom:2px solid var(--ember);clear:both;}
+  .subgroup-label:first-of-type{margin-top:2px;}
+
+  .item{padding:12px 0;border-bottom:1px dashed var(--line);overflow:hidden;}
+  .item:last-child{border-bottom:none;}
+  .item-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+  .item-name{font-size:15px;font-weight:600;color:var(--ink);flex:1 1 auto;overflow-wrap:break-word;}
+  .item-price{color:var(--flame);font-size:15.5px;flex:0 0 auto;white-space:nowrap;font-weight:700;}
+  .item-desc{font-size:12.5px;color:var(--gray);margin-top:3px;line-height:1.45;overflow-wrap:break-word;}
+  .funfact{font-family:'Permanent Marker';font-size:12px;color:var(--flame-dk);margin-top:6px;opacity:.85;line-height:1.3;}
+
+  /* variant / size chips */
+  .variant-row{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap;}
+  .variant-chip{background:var(--ink);color:var(--paper);border-radius:8px;padding:7px 12px;text-align:center;flex:1 1 84px;}
+  .variant-chip .vk{font-size:10px;text-transform:uppercase;letter-spacing:.5px;opacity:.75;}
+  .variant-chip .vp{font-family:'Anton';color:var(--ember);font-size:16px;}
+
+  .size-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .size-chip{background:var(--ink);color:var(--paper);border-radius:8px;padding:8px 12px;text-align:center;flex:1 1 90px;}
+  .size-chip .sz{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;opacity:.75;}
+  .size-chip .pr{font-family:'Anton';color:var(--ember);font-size:17px;}
+
+  .flavor{padding:9px 0;border-bottom:1px dashed var(--line);}
+  .flavor:last-child{border-bottom:none;}
+  .flavor-top{display:flex;align-items:baseline;gap:8px;}
+  .fnum{font-size:11px;color:var(--gray);}
+  .flavor-name{font-size:14.5px;font-weight:700;color:var(--ink);}
+  .flavor-ing{font-size:12px;color:var(--gray);margin-top:1px;line-height:1.4;}
+
+  /* badge sticker */
+  .badge-new{display:inline-block;font-family:'Permanent Marker';background:var(--new);color:var(--ink);padding:3px 11px;border-radius:999px;font-size:12px;transform:rotate(-6deg);margin-left:8px;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+
+  /* polaroid photo */
+  .polaroid{float:right;width:104px;background:#fff;padding:6px 6px 18px 6px;border-radius:3px;box-shadow:0 8px 16px -8px rgba(0,0,0,.45);transform:rotate(2.5deg);margin:0 0 10px 12px;position:relative;}
+  .polaroid img{width:100%;height:90px;object-fit:cover;border-radius:1px;background:#ece2c8;}
+  .polaroid .cap{position:absolute;bottom:2px;left:0;right:0;text-align:center;font-family:'Permanent Marker';font-size:10.5px;color:#3a3428;}
+  .ph-inner{height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--flame);font-size:20px;}
+  .ph-inner span{font-family:'JetBrains Mono';font-size:9.5px;color:var(--gray);}
+
+  /* ---------- footer ---------- */
+  footer{background:var(--ink);color:var(--paper);padding:24px 20px 30px 20px;margin-top:22px;}
+  footer h3{font-family:'Anton',sans-serif;text-transform:uppercase;color:var(--ember);font-size:14px;margin:0 0 10px 0;letter-spacing:.5px;}
+  .foot-row{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px 10px;font-size:13px;padding:9px 0;border-bottom:1px solid #332e26;}
+  .foot-row:last-child{border-bottom:none;}
+  footer a{text-decoration:underline;text-decoration-color:var(--flame);text-underline-offset:3px;}
+  .foot-fine{font-size:10.5px;color:#9a9284;margin-top:16px;line-height:1.5;}
+  .halal-note{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono';font-size:10.5px;color:var(--ember);letter-spacing:.5px;margin-top:14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-row">
+    <div>
+      <h1 class="wordmark display">estamb<span>u</span>l</h1>
+      <p class="concepts mono">Kebab · Pizza · Tacos · Smash</p>
+      <p class="story" data-t="story"></p>
+      <p class="subtag marker" data-t="subtag"></p>
+    </div>
+    <div class="stamp"><span class="ar">حلال</span><span class="tx">HALAL</span></div>
+  </div>
+  <div class="langbar" role="group" aria-label="Idioma / Idioma / Language">
+    <button class="langbtn active" data-lang="es">ES</button>
+    <button class="langbtn" data-lang="ca">CA</button>
+    <button class="langbtn" data-lang="en">EN</button>
+  </div>
+</header>
+<div class="zig"></div>
+
+<div class="nav-wrap"><nav id="tabs"></nav></div>
+
+<main id="main"></main>
+
+<footer>
+  <h3 data-t="whereTitle"></h3>
+  <div class="foot-row"><span data-t="addressLabel"></span><a id="mapLink" href="#" target="_blank" rel="noopener">Av. de Madrid, 42 · Barcelona</a></div>
+  <div class="foot-row"><span>Metro</span><span>Badal (L3)</span></div>
+  <div class="foot-row"><span data-t="phoneLabel"></span><a href="tel:935277914">935 27 79 14</a></div>
+  <div class="foot-row"><span data-t="hoursLabel"></span><span><span data-t="everyday"></span> · 12:30–23:45h</span></div>
+  <div class="foot-row"><span data-t="deliveryLabel"></span><span data-t="deliveryNote"></span></div>
+  <p class="foot-fine" data-t="finePrint"></p>
+</footer>
+
+<script>
+/* ---------- i18n helpers ---------- */
+let LANG = "es";
+function t(obj){ if(!obj) return ""; return obj[LANG] || obj.es || ""; }
+function eur(n){ return n.toFixed(2).replace(".", ",") + " €"; }
+
+const STRINGS = {
+  story:{
+    es:"Cuatro cartas, un mostrador. Kebab, pizza al horno, tacos y smashburgers — todo halal, todo recién hecho, a un semáforo del Metro Badal.",
+    ca:"Quatre cartes, un taulell. Kebab, pizza al forn, tacos i smashburgers — tot halal, tot fet al moment, a un semàfor del Metro Badal.",
+    en:"Four menus, one counter. Kebab, oven pizza, tacos and smashburgers — all halal, all made to order, a crosswalk from Metro Badal."
+  },
+  subtag:{
+    es:"sants-montjuïc · metro badal (l3) · sin rollos",
+    ca:"sants-montjuïc · metro badal (l3) · sense embuts",
+    en:"sants-montjuïc · metro badal (l3) · no fuss, no filler"
+  },
+  whereTitle:{es:"Dónde estamos", ca:"On som", en:"Find us"},
+  addressLabel:{es:"Dirección", ca:"Adreça", en:"Address"},
+  phoneLabel:{es:"Teléfono", ca:"Telèfon", en:"Phone"},
+  hoursLabel:{es:"Horario", ca:"Horari", en:"Hours"},
+  everyday:{es:"Todos los días", ca:"Tots els dies", en:"Every day"},
+  deliveryLabel:{es:"Envío a domicilio", ca:"Enviament a domicili", en:"Delivery"},
+  deliveryNote:{es:"Gratis desde 8 € de pedido", ca:"Gratis a partir de 8 € de comanda", en:"Free from a €8 order"},
+  finePrint:{
+    es:"toca el teléfono para llamar, o la dirección para ver cómo llegar.",
+    ca:"toca el telèfon per trucar, o l'adreça per veure com arribar-hi.",
+    en:"tap the phone to call, or the address for directions."
+  }
+};
+
+const VARIANT_LABELS = {
+  solo:{es:"Solo", ca:"Sol", en:"Only"},
+  menu:{es:"Menú", ca:"Menú", en:"Combo"},
+  pequena:{es:"Pequeña", ca:"Petita", en:"Small"},
+  mediana:{es:"Mediana", ca:"Mitjana", en:"Medium"},
+  grande:{es:"Grande", ca:"Gran", en:"Large"}
+};
+
+/* ---------- menu data (sourced only from the uploaded flyer photos) ---------- */
+const FIXED = { address: "Av. de Madrid, 42, Sants-Montjuïc, 08028 Barcelona" };
+
+const CATEGORIES = [
+{
+  id:"menus", icon:"🍽️", type:"items",
+  label:{es:"Menús", ca:"Menús", en:"Combos"},
+  note:{
+    es:"combo = plato + patatas + bebida (o 2L de cola en los packs grandes). elige pollo, ternera o mixto.",
+    ca:"combo = plat + patates + beguda (o 2L de cola als packs grans). tria pollastre, vedella o mixt.",
+    en:"combo includes fries + a drink (or a 2L cola on the big packs). choose chicken, beef, or mixed."
+  },
+  items:[
+    {name:{es:"Menú 1 · Dürüm Kebab",ca:"Menú 1 · Dürüm Kebab",en:"Combo 1 · Dürüm Kebab"}, desc:{es:"pollo, ternera o mixto + patatas + bebida",ca:"pollastre, vedella o mixt + patates + beguda",en:"chicken, beef or mixed + fries + drink"}, price:7.50},
+    {name:{es:"Menú 2 · 3 Dürüm Kebab",ca:"Menú 2 · 3 Dürüm Kebab",en:"Combo 2 · 3 Dürüm Kebab"}, desc:{es:"pollo, ternera o mixto + cola 2L",ca:"pollastre, vedella o mixt + cola 2L",en:"chicken, beef or mixed + 2L cola"}, price:15.80},
+    {name:{es:"Menú 3 · Pita Kebab",ca:"Menú 3 · Pita Kebab",en:"Combo 3 · Pita Kebab"}, desc:{es:"pollo, ternera o mixto + patatas + bebida",ca:"pollastre, vedella o mixt + patates + beguda",en:"chicken, beef or mixed + fries + drink"}, price:7.50},
+    {name:{es:"Menú 4 · Dürüm al Horno",ca:"Menú 4 · Dürüm al Horno",en:"Combo 4 · Baked Dürüm"}, desc:{es:"pollo, ternera o mixto, gratinado + patatas + bebida",ca:"pollastre, vedella o mixt, gratinat + patates + beguda",en:"chicken, beef or mixed, oven-baked & gratinated + fries + drink"}, price:8.90},
+    {name:{es:"Menú 5 · Dürüm al Horno Barbacoa",ca:"Menú 5 · Dürüm al Horno Barbacoa",en:"Combo 5 · Baked BBQ Dürüm"}, desc:{es:"gratinado con salsa barbacoa + patatas + bebida",ca:"gratinat amb salsa barbacoa + patates + beguda",en:"oven-baked with bbq sauce + fries + drink"}, price:8.90},
+    {name:{es:"Menú 6 · Plato Kebab con Arroz",ca:"Menú 6 · Plat Kebab amb Arròs",en:"Combo 6 · Kebab Plate with Rice"}, desc:{es:"carne a elegir + arroz + patatas + bebida",ca:"carn a triar + arròs + patates + beguda",en:"choice of meat + rice + fries + drink"}, price:9.50},
+    {name:{es:"Menú 7 · Plato Kebab",ca:"Menú 7 · Plat Kebab",en:"Combo 7 · Kebab Plate"}, desc:{es:"ensalada + carne + pan + patatas + bebida",ca:"amanida + carn + pa + patates + beguda",en:"salad + meat + bread + fries + drink"}, price:9.00},
+    {name:{es:"Menú 8 · Nuggets de Pollo",ca:"Menú 8 · Nuggets de Pollastre",en:"Combo 8 · Chicken Nuggets"}, desc:{es:"+ patatas + bebida",ca:"+ patates + beguda",en:"+ fries + drink"}, price:7.00},
+    {name:{es:"Menú 9 · 2 Muslos de Pollo",ca:"Menú 9 · 2 Cuixes de Pollastre",en:"Combo 9 · 2 Chicken Thighs"}, desc:{es:"+ patatas + bebida",ca:"+ patates + beguda",en:"+ fries + drink"}, price:7.00},
+    {name:{es:"Menú 10 · 2 Pizzas Medianas",ca:"Menú 10 · 2 Pizzes Mitjanes",en:"Combo 10 · 2 Medium Pizzas"}, desc:{es:"+ cola 2L",ca:"+ cola 2L",en:"+ 2L cola"}, price:15.90},
+    {name:{es:"Menú 11 · 2 Pizzas Grandes",ca:"Menú 11 · 2 Pizzes Grans",en:"Combo 11 · 2 Large Pizzas"}, desc:{es:"+ patatas + cola 2L",ca:"+ patates + cola 2L",en:"+ fries + 2L cola"}, price:18.50},
+    {name:{es:"Menú 12 · Patatas con Carne y Queso",ca:"Menú 12 · Patates amb Carn i Formatge",en:"Combo 12 · Loaded Fries with Meat & Cheese"}, variants:[{key:"pequena",price:4.00},{key:"grande",price:6.00}]},
+    {name:{es:"Menú 13 · 2 Pizzas Medianas + 2 Dürüm o Pita",ca:"Menú 13 · 2 Pizzes Mitjanes + 2 Dürüm o Pita",en:"Combo 13 · 2 Medium Pizzas + 2 Dürüm or Pita"}, desc:{es:"+ 2 patatas + cola 2L",ca:"+ 2 patates + cola 2L",en:"+ 2 fries + 2L cola"}, price:24.50},
+    {name:{es:"Menú 14 · 3 Dürüm o Pita + 2 Hamburguesas",ca:"Menú 14 · 3 Dürüm o Pita + 2 Hamburgueses",en:"Combo 14 · 3 Dürüm or Pita + 2 Burgers"}, desc:{es:"+ 2 patatas + cola 2L",ca:"+ 2 patates + cola 2L",en:"+ 2 fries + 2L cola"}, price:21.00},
+    {name:{es:"Menú 15 · Hamburguesa",ca:"Menú 15 · Hamburguesa",en:"Combo 15 · Burger"}, desc:{es:"pollo, ternera o vegetal + patatas + bebida",ca:"pollastre, vedella o vegetal + patates + beguda",en:"chicken, beef or veggie + fries + drink"}, price:7.00},
+    {name:{es:"Menú 16 · 2 Dürüm + 2 Pita",ca:"Menú 16 · 2 Dürüm + 2 Pita",en:"Combo 16 · 2 Dürüm + 2 Pita"}, desc:{es:"pollo, ternera, mixto o falafel + cola 2L",ca:"pollastre, vedella, mixt o falafel + cola 2L",en:"chicken, beef, mixed or falafel + 2L cola"}, price:20.50},
+    {name:{es:"Menú 17 · 4 Hamburguesas",ca:"Menú 17 · 4 Hamburgueses",en:"Combo 17 · 4 Burgers"}, desc:{es:"pollo, ternera o vegetal + cola 2L",ca:"pollastre, vedella o vegetal + cola 2L",en:"chicken, beef or veggie + 2L cola"}, price:15.95},
+    {name:{es:"Menú 18 · Alitas de Pollo (6 uds)",ca:"Menú 18 · Ales de Pollastre (6 unitats)",en:"Combo 18 · Chicken Wings (6 pcs)"}, desc:{es:"+ patatas + bebida",ca:"+ patates + beguda",en:"+ fries + drink"}, price:7.00}
+  ]
+},
+{
+  id:"smash", icon:"🍔", type:"items",
+  label:{es:"Smash Burgers", ca:"Smash Burgers", en:"Smash Burgers"},
+  items:[
+    {name:{es:"Smash Burger",ca:"Smash Burger",en:"Smash Burger"}, desc:{es:"carne picada fresca prensada, queso cheddar, brie y cebolla caramelizada",ca:"carn picada fresca premsada, formatge cheddar, brie i ceba caramel·litzada",en:"fresh smashed beef patty, cheddar, brie & caramelized onion"}, photo:1, variants:[{key:"solo",price:7.90},{key:"menu",price:10.90}]},
+    {name:{es:"Crispy Box",ca:"Crispy Box",en:"Crispy Box"}, desc:{es:"patatas con pollo crispy y queso cheddar fundido",ca:"patates amb pollastre crispy i formatge cheddar fos",en:"fries loaded with crispy chicken & melted cheddar"}, photo:2, variants:[{key:"mediana",price:6.00},{key:"grande",price:8.00}]},
+    {name:{es:"Kebab Box",ca:"Kebab Box",en:"Kebab Box"}, desc:{es:"patatas con carne de kebab (pollo o ternera, blanca o picante) y queso mozzarella",ca:"patates amb carn de kebab (pollastre o vedella, blanca o picant) i formatge mozzarella",en:"fries loaded with kebab meat (chicken or beef, mild or spicy) & mozzarella"}, photo:3, variants:[{key:"mediana",price:4.00},{key:"grande",price:6.00}]}
+  ]
+},
+{
+  id:"tacos", icon:"🌮", type:"items",
+  label:{es:"Tacos", ca:"Tacos", en:"Tacos"},
+  note:{
+    es:"elige tu salsa: andaluza, argelina, samurái, hummer, chili-thai o barbacoa.",
+    ca:"tria la teva salsa: andalusa, algeriana, samurai, hummer, chili-thai o barbacoa.",
+    en:"pick your sauce: andalusian, algerian, samurai, hummer, chili-thai or bbq."
+  },
+  items:[
+    {name:{es:"Taco Pollo Marinado",ca:"Taco Pollastre Marinat",en:"Marinated Chicken Taco"}, desc:{es:"pollo marinado a la parrilla",ca:"pollastre marinat a la graella",en:"grilled marinated chicken"}, photo:4, variants:[{key:"solo",price:6.50},{key:"menu",price:8.90}]},
+    {name:{es:"Taco Pollo Crispy",ca:"Taco Pollastre Crispy",en:"Crispy Chicken Taco"}, desc:{es:"pollo crispy crujiente",ca:"pollastre crispy cruixent",en:"crispy fried chicken"}, variants:[{key:"solo",price:6.50},{key:"menu",price:8.90}]},
+    {name:{es:"Taco Cordon Blue",ca:"Taco Cordon Blue",en:"Cordon Bleu Taco"}, desc:{es:"pollo cordon bleu, jamón y queso",ca:"pollastre cordon bleu, pernil i formatge",en:"chicken cordon bleu, ham & cheese"}, variants:[{key:"solo",price:7.50},{key:"menu",price:9.90}]},
+    {name:{es:"Taco Carne Picada",ca:"Taco Carn Picada",en:"Ground Beef Taco"}, desc:{es:"carne picada a la plancha",ca:"carn picada a la planxa",en:"grilled ground beef"}, variants:[{key:"solo",price:7.50},{key:"menu",price:9.90}]},
+    {name:{es:"Taco Carne de Kebab",ca:"Taco Carn de Kebab",en:"Kebab Meat Taco"}, desc:{es:"carne de kebab clásica",ca:"carn de kebab clàssica",en:"classic kebab meat"}, variants:[{key:"solo",price:6.50},{key:"menu",price:8.90}]}
+  ]
+},
+{
+  id:"pizzas", icon:"🍕", type:"pizza",
+  label:{es:"Pizzas", ca:"Pizzes", en:"Pizzas"},
+  note:{
+    es:"masa fresca de horno · mismo precio en todos los sabores.",
+    ca:"massa fresca de forn · mateix preu en tots els sabors.",
+    en:"fresh oven-baked dough · same price on every flavor."
+  },
+  sizes:{pequena:7.00, mediana:8.00, grande:9.00},
+  flavors:[
+    {num:"01", name:{es:"Margarita",ca:"Margarita",en:"Margherita"}, ing:{es:"salsa de tomate, queso, orégano",ca:"salsa de tomàquet, formatge, orenga",en:"tomato sauce, cheese, oregano"}},
+    {num:"02", name:{es:"Jamón",ca:"Pernil",en:"Ham"}, ing:{es:"salsa de tomate, jamón dulce, orégano",ca:"salsa de tomàquet, pernil dolç, orenga",en:"tomato sauce, sweet ham, oregano"}},
+    {num:"03", name:{es:"Chorizo",ca:"Chorizo",en:"Chorizo"}, ing:{es:"salsa de tomate, queso, chorizo, orégano",ca:"salsa de tomàquet, formatge, chorizo, orenga",en:"tomato sauce, cheese, chorizo, oregano"}},
+    {num:"04", name:{es:"Atún",ca:"Tonyina",en:"Tuna"}, ing:{es:"salsa de tomate, queso, atún, cebolla, orégano",ca:"salsa de tomàquet, formatge, tonyina, ceba, orenga",en:"tomato sauce, cheese, tuna, onion, oregano"}},
+    {num:"05", name:{es:"Fungi",ca:"Fungi",en:"Fungi"}, ing:{es:"salsa de tomate, queso, jamón, salami, champiñones, orégano",ca:"salsa de tomàquet, formatge, pernil, salami, xampinyons, orenga",en:"tomato sauce, cheese, ham, salami, mushrooms, oregano"}},
+    {num:"06 / 15", name:{es:"Hawaiana",ca:"Hawaiana",en:"Hawaiian"}, ing:{es:"salsa de tomate, queso, jamón dulce, piña, orégano",ca:"salsa de tomàquet, formatge, pernil dolç, pinya, orenga",en:"tomato sauce, cheese, sweet ham, pineapple, oregano"}, funfact:{es:"la Nº06 y la Nº15 son la misma pizza — hasta el cartel original se hizo un lío 😄",ca:"la Núm. 06 i la Núm. 15 són la mateixa pizza — fins i tot el cartell original es va confondre 😄",en:"No. 06 and No. 15 are the same pizza — even the original sign got them mixed up 😄"}},
+    {num:"07", name:{es:"4 Quesos",ca:"4 Formatges",en:"4 Cheeses"}, ing:{es:"salsa de tomate, roquefort, queso de cabra, mozzarella fresca",ca:"salsa de tomàquet, roquefort, formatge de cabra, mozzarella fresca",en:"tomato sauce, roquefort, goat cheese, fresh mozzarella"}},
+    {num:"08", name:{es:"4 Estaciones",ca:"4 Estacions",en:"4 Seasons"}, ing:{es:"salsa de tomate, jamón, salami, chorizo, champiñones",ca:"salsa de tomàquet, pernil, salami, chorizo, xampinyons",en:"tomato sauce, ham, salami, chorizo, mushrooms"}},
+    {num:"09", name:{es:"Carbonara",ca:"Carbonara",en:"Carbonara"}, ing:{es:"salsa de tomate, nata, jamón, queso",ca:"salsa de tomàquet, nata, pernil, formatge",en:"tomato sauce, cream, ham, cheese"}},
+    {num:"10", name:{es:"Barbacoa",ca:"Barbacoa",en:"BBQ"}, ing:{es:"salsa de tomate, queso, carne picada",ca:"salsa de tomàquet, formatge, carn picada",en:"tomato sauce, cheese, ground beef"}},
+    {num:"11", name:{es:"Especial",ca:"Especial",en:"Special"}, ing:{es:"salsa de tomate, queso, carne de kebab, pimiento, cebolla, olivas negras",ca:"salsa de tomàquet, formatge, carn de kebab, pebrot, ceba, olives negres",en:"tomato sauce, cheese, kebab meat, pepper, onion, black olives"}, photo:5},
+    {num:"12", name:{es:"Mexicana",ca:"Mexicana",en:"Mexican"}, ing:{es:"salsa barbacoa, pollo, cebolla, pimiento, gamba",ca:"salsa barbacoa, pollastre, ceba, pebrot, gamba",en:"bbq sauce, chicken, onion, pepper, shrimp"}},
+    {num:"13", name:{es:"Vegetal",ca:"Vegetal",en:"Veggie"}, ing:{es:"salsa de tomate, queso, cebolla, espinaca, brócoli, champiñón, pimiento, berenjena",ca:"salsa de tomàquet, formatge, ceba, espinacs, bròquil, xampinyó, pebrot, albergínia",en:"tomato sauce, cheese, onion, spinach, broccoli, mushroom, pepper, eggplant"}},
+    {num:"14", name:{es:"Marinera",ca:"Marinera",en:"Seafood"}, ing:{es:"salmón, mejillones, gambas, palitos de cangrejo, ajo",ca:"salmó, musclos, gambes, pals de cranc, all",en:"salmon, mussels, shrimp, crab sticks, garlic"}},
+    {num:"16", name:{es:"Al Gusto",ca:"Al Gust",en:"Build Your Own"}, ing:{es:"4 ingredientes a elegir",ca:"4 ingredients a triar",en:"choose any 4 toppings"}}
+  ]
+},
+{
+  id:"calzone", icon:"🥟", type:"pizza",
+  label:{es:"Calzone", ca:"Calzone", en:"Calzone"},
+  note:{
+    es:"masa fresca doblada al horno · mismo precio en todos los sabores.",
+    ca:"massa fresca plegada al forn · mateix preu en tots els sabors.",
+    en:"fresh dough folded & oven-baked · same price on every flavor."
+  },
+  sizes:{pequena:7.00, mediana:8.00, grande:9.00},
+  flavors:[
+    {num:"17", name:{es:"Margarita",ca:"Margarita",en:"Margherita"}, ing:{es:"salsa de tomate, queso, orégano",ca:"salsa de tomàquet, formatge, orenga",en:"tomato sauce, cheese, oregano"}},
+    {num:"18", name:{es:"Jamón",ca:"Pernil",en:"Ham"}, ing:{es:"salsa de tomate, jamón dulce, orégano",ca:"salsa de tomàquet, pernil dolç, orenga",en:"tomato sauce, sweet ham, oregano"}},
+    {num:"19", name:{es:"Especial",ca:"Especial",en:"Special"}, ing:{es:"salsa de tomate, queso, carne de kebab, pimiento, cebolla, olivas negras",ca:"salsa de tomàquet, formatge, carn de kebab, pebrot, ceba, olives negres",en:"tomato sauce, cheese, kebab meat, pepper, onion, black olives"}},
+    {num:"20", name:{es:"Salami",ca:"Salami",en:"Salami"}, ing:{es:"salsa de tomate, queso, salami, orégano",ca:"salsa de tomàquet, formatge, salami, orenga",en:"tomato sauce, cheese, salami, oregano"}},
+    {num:"21", name:{es:"Chorizo",ca:"Chorizo",en:"Chorizo"}, ing:{es:"salsa de tomate, queso, chorizo, orégano",ca:"salsa de tomàquet, formatge, chorizo, orenga",en:"tomato sauce, cheese, chorizo, oregano"}},
+    {num:"22", name:{es:"Atún",ca:"Tonyina",en:"Tuna"}, ing:{es:"salsa de tomate, queso, atún, cebolla, orégano",ca:"salsa de tomàquet, formatge, tonyina, ceba, orenga",en:"tomato sauce, cheese, tuna, onion, oregano"}}
+  ]
+},
+{
+  id:"kebabpita", icon:"🌯", type:"items",
+  label:{es:"Dürüm & Pita", ca:"Dürüm & Pita", en:"Dürüm & Pita"},
+  note:{
+    es:"para llevar tal cual, sin patatas ni bebida — mira los Menús si quieres el combo completo.",
+    ca:"per emportar tal qual, sense patates ni beguda — mira els Menús si vols el combo complet.",
+    en:"on its own, no fries or drink — check the Combos tab for the full meal."
+  },
+  items:[
+    {name:{es:"Dürüm Kebab",ca:"Dürüm Kebab",en:"Dürüm Kebab"}, desc:{es:"pollo, ternera o mixto · pan de tortilla, salsa, lechuga, tomate, cebolla, col, olivas, zanahoria",ca:"pollastre, vedella o mixt · pa de tortilla, salsa, enciam, tomàquet, ceba, col, olives, pastanaga",en:"chicken, beef or mixed · tortilla wrap, sauce, lettuce, tomato, onion, cabbage, olives, carrot"}, price:4.90, group:"Dürüm", photo:6},
+    {name:{es:"Dürüm Solo Carne",ca:"Dürüm Només Carn",en:"Dürüm Meat Only"}, desc:{es:"pan de pita, solo carne, 2 salsas",ca:"pa de pita, només carn, 2 salses",en:"pita bread, meat only, 2 sauces"}, price:5.90, group:"Dürüm"},
+    {name:{es:"Dürüm al Horno",ca:"Dürüm al Forn",en:"Baked Dürüm"}, desc:{es:"pollo, ternera o mixto, gratinado al horno",ca:"pollastre, vedella o mixt, gratinat al forn",en:"chicken, beef or mixed, oven-baked & gratinated"}, price:6.50, group:"Dürüm", photo:7},
+    {name:{es:"Dürüm Falafel",ca:"Dürüm Falafel",en:"Dürüm Falafel"}, desc:{es:"croquetas de garbanzo, verdura, 2 salsas",ca:"croquetes de cigrons, verdura, 2 salses",en:"chickpea falafel, veggies, 2 sauces"}, price:4.90, group:"Dürüm"},
+    {name:{es:"Pita Kebab",ca:"Pita Kebab",en:"Pita Kebab"}, desc:{es:"pollo, ternera o mixto · pan de tortilla, salsa, lechuga, tomate, cebolla, col, olivas, zanahoria",ca:"pollastre, vedella o mixt · pa de tortilla, salsa, enciam, tomàquet, ceba, col, olives, pastanaga",en:"chicken, beef or mixed · tortilla wrap, sauce, lettuce, tomato, onion, cabbage, olives, carrot"}, price:4.90, group:"Pita", photo:8},
+    {name:{es:"Pita Solo Carne",ca:"Pita Només Carn",en:"Pita Meat Only"}, desc:{es:"pan de pita, solo carne, 2 salsas",ca:"pa de pita, només carn, 2 salses",en:"pita bread, meat only, 2 sauces"}, price:5.90, group:"Pita"},
+    {name:{es:"Pita Falafel",ca:"Pita Falafel",en:"Pita Falafel"}, desc:{es:"croquetas de garbanzo, verdura, 2 salsas",ca:"croquetes de cigrons, verdura, 2 salses",en:"chickpea falafel, veggies, 2 sauces"}, price:4.90, group:"Pita"}
+  ]
+},
+{
+  id:"platos", icon:"🍟", type:"items",
+  label:{es:"Platos & Extras", ca:"Plats & Extres", en:"Plates & Sides"},
+  items:[
+    {name:{es:"Plato Kebab",ca:"Plat Kebab",en:"Kebab Plate"}, desc:{es:"ensalada, carne, pan, patatas",ca:"amanida, carn, pa, patates",en:"salad, meat, bread, fries"}, price:8.00, photo:9},
+    {name:{es:"Hamburguesa",ca:"Hamburguesa",en:"Burger"}, desc:{es:"pollo, ternera o vegetal",ca:"pollastre, vedella o vegetal",en:"chicken, beef or veggie"}, price:5.00, photo:10},
+    {name:{es:"Nuggets de Pollo",ca:"Nuggets de Pollastre",en:"Chicken Nuggets"}, price:5.00},
+    {name:{es:"Alitas de Pollo",ca:"Ales de Pollastre",en:"Chicken Wings"}, price:5.00},
+    {name:{es:"Calamares a la Romana",ca:"Calamars a la Romana",en:"Fried Calamari"}, price:5.00},
+    {name:{es:"Patatas Fritas",ca:"Patates Fregides",en:"French Fries"}, price:2.50},
+    {name:{es:"Patatas Bravas",ca:"Patates Braves",en:"Patatas Bravas"}, price:4.00}
+  ]
+},
+{
+  id:"ensaladas", icon:"🥗", type:"items",
+  label:{es:"Ensaladas", ca:"Amanides", en:"Salads"},
+  items:[
+    {name:{es:"Ensalada Verde",ca:"Amanida Verda",en:"Green Salad"}, desc:{es:"lechuga, tomate, cebolla, olivas, maíz",ca:"enciam, tomàquet, ceba, olives, blat de moro",en:"lettuce, tomato, onion, olives, corn"}, price:3.00},
+    {name:{es:"Ensalada Pollo",ca:"Amanida Pollastre",en:"Chicken Salad"}, desc:{es:"lechuga, tomate, pechuga de pollo, cebolla",ca:"enciam, tomàquet, pit de pollastre, ceba",en:"lettuce, tomato, chicken breast, onion"}, price:4.50},
+    {name:{es:"Ensalada Mozzarella",ca:"Amanida Mozzarella",en:"Mozzarella Salad"}, desc:{es:"mozzarella, queso de cabra, lechuga, tomate, feta",ca:"mozzarella, formatge de cabra, enciam, tomàquet, feta",en:"mozzarella, goat cheese, lettuce, tomato, feta"}, price:5.00, photo:11},
+    {name:{es:"Ensalada Atún",ca:"Amanida Tonyina",en:"Tuna Salad"}, desc:{es:"atún, lechuga, tomate, cebolla, pimientos, olivas",ca:"tonyina, enciam, tomàquet, ceba, pebrots, olives",en:"tuna, lettuce, tomato, onion, peppers, olives"}, price:5.50}
+  ]
+},
+{
+  id:"bowls", icon:"🍚", type:"items",
+  label:{es:"Bowls", ca:"Bowls", en:"Bowls"},
+  items:[
+    {name:{es:"Pollo Crispy con Arroz y Salsas",ca:"Pollastre Crispy amb Arròs i Salses",en:"Crispy Chicken Rice Bowl"}, desc:{es:"pollo crispy, arroz especial, salsas exclusivas de la casa",ca:"pollastre crispy, arròs especial, salses exclusives de la casa",en:"crispy chicken, special rice, signature house sauces"}, photo:12, tag:"nuevo", variants:[{key:"pequena",price:6.00},{key:"grande",price:9.00}]}
+  ]
+}
+];
+
+/* ---------- rendering ---------- */
+function photoBox(num){
+  if(!num) return "";
+  return `<div class="polaroid"><img src="${num}.jpg" data-num="${num}" data-i="0" alt="" onerror="polaroidFallback(this)"><span class="cap">Nº${num}</span></div>`;
+}
+function polaroidFallback(img){
+  const exts=["jpg","jpeg","png","webp"];
+  let i = parseInt(img.dataset.i||"0",10)+1;
+  if(i<exts.length){ img.dataset.i=i; img.src = img.dataset.num + "." + exts[i]; return; }
+  const box = img.closest(".polaroid");
+  box.classList.add("ph-empty");
+  box.innerHTML = `<div class="ph-inner">🔥<span>Nº${img.dataset.num}</span></div>`;
+}
+
+function renderVariants(variants){
+  return `<div class="variant-row">${variants.map(v=>
+    `<div class="variant-chip"><div class="vk">${t(VARIANT_LABELS[v.key])}</div><div class="vp mono">${eur(v.price)}</div></div>`
+  ).join("")}</div>`;
+}
+
+function renderItem(it){
+  const badge = it.tag==="nuevo" ? `<span class="badge-new">${t({es:"¡Nuevo!",ca:"Nou!",en:"New!"})}</span>` : "";
+  return `<div class="item">
+    ${photoBox(it.photo)}
+    <div class="item-top">
+      <span class="item-name">${t(it.name)}${badge}</span>
+      ${it.price!==undefined ? `<span class="item-price mono">${eur(it.price)}</span>` : ""}
+    </div>
+    ${it.desc ? `<div class="item-desc">${t(it.desc)}</div>` : ""}
+    ${it.variants ? renderVariants(it.variants) : ""}
+  </div>`;
+}
+
+function renderItemsSection(cat){
+  let html = "";
+  let lastGroup = null;
+  cat.items.forEach(it=>{
+    if(it.group && it.group !== lastGroup){
+      html += `<div class="subgroup-label">${it.group}</div>`;
+      lastGroup = it.group;
+    }
+    html += renderItem(it);
+  });
+  return html;
+}
+
+function renderPizzaSection(cat){
+  const sizeChips = Object.entries(cat.sizes).map(([sz,pr])=>
+    `<div class="size-chip"><div class="sz">${t(VARIANT_LABELS[sz])}</div><div class="pr mono">${eur(pr)}</div></div>`
+  ).join("");
+  const flavors = cat.flavors.map(f=>`
+    <div class="flavor">
+      ${photoBox(f.photo)}
+      <div class="flavor-top"><span class="fnum mono">${f.num}</span><span class="flavor-name">${t(f.name)}</span></div>
+      <div class="flavor-ing">${t(f.ing)}</div>
+      ${f.funfact ? `<div class="funfact">${t(f.funfact)}</div>` : ""}
+    </div>`).join("");
+  return `<div class="size-row">${sizeChips}</div>${flavors}`;
+}
+
+function buildMenu(keepActive){
+  const tabsEl = document.getElementById("tabs");
+  const mainEl = document.getElementById("main");
+  tabsEl.innerHTML = "";
+  mainEl.innerHTML = "";
+
+  CATEGORIES.forEach((cat, i)=>{
+    const isActive = keepActive ? cat.id === keepActive : i === 0;
+
+    const btn = document.createElement("button");
+    btn.className = "tab" + (isActive ? " active" : "");
+    btn.textContent = (cat.icon ? cat.icon + " " : "") + t(cat.label);
+    btn.dataset.target = cat.id;
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll(".tab").forEach(el=>el.classList.remove("active"));
+      document.querySelectorAll(".section").forEach(el=>el.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById("sec-"+cat.id).classList.add("active");
+    });
+    tabsEl.appendChild(btn);
+
+    const sec = document.createElement("section");
+    sec.className = "section" + (isActive ? " active" : "");
+    sec.id = "sec-" + cat.id;
+    sec.innerHTML = `
+      <div class="flyer">
+        <div class="section-head"><h2 class="display">${t(cat.label)}</h2></div>
+        ${cat.note ? `<div class="section-note">${t(cat.note)}</div>` : ""}
+        ${cat.type === "pizza" ? renderPizzaSection(cat) : renderItemsSection(cat)}
+      </div>`;
+    mainEl.appendChild(sec);
+  });
+}
+
+function translateStatic(){
+  document.querySelectorAll("[data-t]").forEach(el=>{
+    const key = el.getAttribute("data-t");
+    if(STRINGS[key]) el.textContent = t(STRINGS[key]);
+  });
+  document.documentElement.lang = LANG;
+}
+
+function setLang(lang){
+  LANG = lang;
+  document.querySelectorAll(".langbtn").forEach(b=>b.classList.toggle("active", b.dataset.lang===lang));
+  const current = document.querySelector(".tab.active");
+  const keepId = current ? current.dataset.target : null;
+  translateStatic();
+  buildMenu(keepId);
+}
+
+document.querySelectorAll(".langbtn").forEach(btn=>{
+  btn.addEventListener("click", ()=> setLang(btn.dataset.lang));
+});
+
+document.getElementById("mapLink").href =
+  "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(FIXED.address);
+
+translateStatic();
+buildMenu(null);
+</script>
+
+</body>
+</html>
